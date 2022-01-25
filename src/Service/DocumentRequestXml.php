@@ -73,7 +73,7 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
             return json_encode($objeto);
         }
         // Guardamos el CDR
-        file_put_contents('R-'.$document->getName().'.zip', $result->getCdrZip());
+        file_put_contents('R-'.$filename.'.zip', $result->getCdrZip());
 
         $this->toBase64Zip($result);
         $xml = $see->getFactory()->getLastXml();
@@ -94,7 +94,7 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
         $ruc = $document->ruc;
 
         //$file = $ruc.'-'.'RC'.'-'.$date.'-'.$correlativo.'.xml';
-        $file = $filename.'xml';
+        $file = $filename.'.xml';
 
         $xmlSigned = file_get_contents($file);
 
@@ -109,9 +109,7 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
             ];
             return json_encode($objeto);
         }
-        // Guardamos el CDR
-        file_put_contents('R-'.$document->getName().'.zip', $result->getCdrZip());
-        
+
         $this->toBase64Zip($result);
         $xml = $see->getFactory()->getLastXml();
 

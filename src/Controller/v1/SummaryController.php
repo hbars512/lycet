@@ -86,12 +86,15 @@ class SummaryController extends AbstractController
     public function status(Request $request, SeeFactory $factory): JsonResponse
     {
         $ticket = $request->query->get('ticket');
+        $ruc = $request->query->get('ruc');
         if (empty($ticket)) {
             return new JsonResponse(['message' => 'Ticket Requerido'], 400);
         }
         $see = $factory->build(Summary::class, $request->query->get('ruc'));
         $result = $see->getStatus($ticket);
 
+        // Guardamos el CDR
+        file_put_contents('R-'.$ruc.'-'.$ticket.'.zip', $result->getCdrZip());
         if ($result->isSuccess()) {
             $result->setCdrZip(base64_encode($result->getCdrZip()));
         }
