@@ -60,7 +60,6 @@ class SaleController extends AbstractController
                 ->setTipoDoc($obj->clienteTipo)
                 ->setNumDoc($obj->clienteNumero)
             );
-
         $qr = $this->render->getImage($sale);
 
         return new Response($qr, 200, ['Content-Type' => 'image/svg+xml']);

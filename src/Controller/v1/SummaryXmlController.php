@@ -1,16 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Giansalex
- * Date: 17/02/2018
- * Time: 23:51
+ * Created by Robot.
+ * User: Own
+ * Date: 20/01/2022
+ * Time: 00:25
  */
-
 namespace App\Controller\v1;
 
-use App\Service\DocumentRequestInterface;
+use App\Service\DocumentRequestXmlInterface;
 use App\Service\SeeFactory;
-use Greenter\Model\Voided\Reversion;
+use Greenter\Model\Summary\Summary;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,14 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class ReversionController.
+ * Class SummaryXmlController.
  *
- * @Route("/api/v1/reversion")
+ * @Route("/api/v1/summary")
  */
-class ReversionController extends AbstractController
+class SummaryXmlController extends AbstractController
 {
     /**
-     * @var DocumentRequestInterface
+     * @var DocumentRequestXmlInterface
      */
     private $document;
     /**
@@ -36,44 +35,25 @@ class ReversionController extends AbstractController
 
     /**
      * InvoiceController constructor.
-     * @param DocumentRequestInterface $document
+     * @param DocumentRequestXmlInterface $document
      * @param SerializerInterface $serializer
      */
-    public function __construct(DocumentRequestInterface $document, SerializerInterface $serializer)
+    public function __construct(DocumentRequestXmlInterface $document, SerializerInterface $serializer)
     {
         $this->document = $document;
-        $this->document->setDocumentType(Reversion::class);
+        $this->document->setDocumentType(Summary::class);
         $this->serializer = $serializer;
     }
 
     /**
-     * @Route("/send", methods={"POST"})
+     * @Route("/send_summary_xml", methods={"POST"})
      *
+     * @param Request $request
      * @return Response
      */
-    public function send(): Response
+    public function send_summary_xml(Request $request): Response
     {
-        return $this->document->send(false);
-    }
-
-    /**
-     * @Route("/xml", methods={"POST"})
-     *
-     * @return Response
-     */
-    public function xml(): Response
-    {
-        return $this->document->xml();
-    }
-
-    /**
-     * @Route("/pdf", methods={"POST"})
-     *
-     * @return Response
-     */
-    public function pdf(): Response
-    {
-        return $this->document->pdf();
+        return $this->document->send_summary_xml($request);
     }
 
     /**
@@ -89,7 +69,7 @@ class ReversionController extends AbstractController
         if (empty($ticket)) {
             return new JsonResponse(['message' => 'Ticket Requerido'], 400);
         }
-        $see = $factory->build(Reversion::class, $request->query->get('ruc'));
+        $see = $factory->build(Summary::class, $request->query->get('ruc'));
         $result = $see->getStatus($ticket);
 
         if ($result->isSuccess()) {

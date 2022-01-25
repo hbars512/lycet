@@ -68,28 +68,35 @@ class DocumentRequest implements DocumentRequestInterface
      *
      * @return Response
      */
-    public function send(): Response
+    public function send($value): Response
     {
-       $document = $this->getDocument();
-
-        /**@var $errors array */
-//        $errors = $this->validator->validate($document);
-//        if (count($errors)) {
-//            return $this->json($errors, 400);
-//        }
-
+        $document = $this->getDocument();
         $see = $this->getSee($document->getCompany()->getRuc());
         $result = $see->send($document);
 
+        if (!$result->isSuccess()) {
+            // Mostrar error al conectarse a SUNAT.
+            $objeto = [
+                "Codigo Error" => $result->getError()->getCode(),
+                "Mensaje Error" => $result->getError()->getMessage()
+            ];
+            return json_encode($objeto);
+        }
+        //Guardamos el CDR
+        //$tipo_doc = $document->getTipoDoc();
+        if($value==true){
+            file_put_contents('R-'.$document->getName().'.zip', $result->getCdrZip());
+        }
+
         $this->toBase64Zip($result);
         $xml = $see->getFactory()->getLastXml();
+        file_put_contents($document->getName().'.xml', $xml);
 
         $data = [
             'xml' => $xml,
             'hash' => $this->GetHashFromXml($xml),
             'sunatResponse' => $result
         ];
-
         return $this->json($data);
     }
 
@@ -111,6 +118,8 @@ class DocumentRequest implements DocumentRequestInterface
         $see = $this->getSee($document->getCompany()->getRuc());
 
         $xml  = $see->getXmlSigned($document);
+
+        file_put_contents($document->getName().'.xml', $xml);
 
         return $this->file($xml, $document->getName().'.xml', 'text/xml');
     }

@@ -43,7 +43,7 @@ class NoteController extends AbstractController
      */
     public function send(): Response
     {
-        return $this->document->send();
+        return $this->document->send(false);
     }
 
     /**

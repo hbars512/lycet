@@ -74,6 +74,34 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ValidationResponse"
+  /invoice/send_xml:
+    post:
+      tags:
+        - invoice
+      summary: Enviar XML generado
+      description: Retorna la respuesta de SUNAT y el XML firmado
+      operationId: sendInvoiceXml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileDataXml"
+        required: true
+      responses:
+        "200":
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponse"
+        "400":
+          description: Error de Validación
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ValidationResponse"
   /invoice/pdf:
     post:
       tags:
@@ -198,6 +226,34 @@ paths:
           description: Error de Validación
           content:
             text/xml:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ValidationResponse"
+  /summary/send_summary_xml:
+    post:
+      tags:
+        - summary
+      summary: Enviar el XML de un resumen diario generado
+      description: Retorna la respuesta de SUNAT y el XML firmado
+      operationId: sendSummaryXml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileDataSummaryXml"
+        required: true
+      responses:
+        "200":
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponse"
+        "400":
+          description: Error de Validación
+          content:
+            application/json:
               schema:
                 type: array
                 items:
@@ -1724,3 +1780,21 @@ components:
         clienteNumero:
           type: string
           description: Numero de documento del cliente
+    FileDataXml:
+      type: object
+      properties:
+        filename : 
+          type: string
+          description: Nombre de archivo
+        ruc:
+          type: string
+          description: Ruc de la empresa
+    FileDataSummaryXml:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: Nombre de archivo
+        ruc:
+          type: string
+          description: Ruc de la empresa

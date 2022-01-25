@@ -1,20 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Giansalex
- * Date: 17/02/2018
- * Time: 21:42
+ * Created by Robot.
+ * User: Robot
+ * Date: 20/01/2022
+ * Time: 1:17
  */
 
 namespace App\Service;
 
 use Greenter\See;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 /**
- * Interface DocumentRequestInterface
+ * Interface DocumentRequestXmlInterface
  */
-interface DocumentRequestInterface
+interface DocumentRequestXmlInterface
 {
     /**
      * Set document to process.
@@ -26,24 +26,18 @@ interface DocumentRequestInterface
     /**
      * Get Result.
      *
+     * @param Request $request
      * @return Response
-     * @param bool $value
      */
-    public function send(bool $value): Response;
+    public function send_xml(Request $request): Response;
 
     /**
-     * Get Xml.
+     * Get Result.
      *
+     * @param Request $request
      * @return Response
      */
-    public function xml(): Response;
-
-    /**
-     * Get Pdf.
-     *
-     * @return Response
-     */
-    public function pdf(): Response;
+    public function send_summary_xml(Request $request): Response;
 
     /**
      * Get Configured See.
