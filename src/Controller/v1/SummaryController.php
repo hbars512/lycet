@@ -94,7 +94,11 @@ class SummaryController extends AbstractController
         $result = $see->getStatus($ticket);
 
         // Guardamos el CDR
-        file_put_contents('R-'.$ruc.'-'.$ticket.'.zip', $result->getCdrZip());
+        $dir_to_save = "./data_sunat/";
+        if (!is_dir($dir_to_save)) {
+            mkdir($dir_to_save);
+        }
+        file_put_contents($dir_to_save.'R-'.$ruc.'-'.$ticket.'.zip', $result->getCdrZip());
         if ($result->isSuccess()) {
             $result->setCdrZip(base64_encode($result->getCdrZip()));
         }

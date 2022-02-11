@@ -58,8 +58,8 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
         $ruc = $document->ruc;
 
         $file = $filename.'.xml';
-
-        $xmlSigned = file_get_contents($file);
+        $dir_to_save = "./data_sunat/";
+        $xmlSigned = file_get_contents($dir_to_save.$file);
 
         $see = $this->getSee($ruc);
         $result = $see->sendXmlFile($xmlSigned);
@@ -70,10 +70,14 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
                 "Codigo Error" => $result->getError()->getCode(),
                 "Mensaje Error" => $result->getError()->getMessage()
             ];
-            return json_encode($objeto);
+            return $this->json($objeto, 400);
         }
         // Guardamos el CDR
-        file_put_contents('R-'.$filename.'.zip', $result->getCdrZip());
+        $dir_to_save = "./data_sunat/";
+        if (!is_dir($dir_to_save)) {
+            mkdir($dir_to_save);
+        }
+        file_put_contents($dir_to_save.'R-'.$filename.'.zip', $result->getCdrZip());
 
         $this->toBase64Zip($result);
         $xml = $see->getFactory()->getLastXml();
@@ -96,7 +100,8 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
         //$file = $ruc.'-'.'RC'.'-'.$date.'-'.$correlativo.'.xml';
         $file = $filename.'.xml';
 
-        $xmlSigned = file_get_contents($file);
+        $dir_to_save = "./data_sunat/";
+        $xmlSigned = file_get_contents($dir_to_save.$file);
 
         $see = $this->getSee($ruc);
         $result = $see->sendXmlFile($xmlSigned);
@@ -107,7 +112,7 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
                 "Codigo Error" => $result->getError()->getCode(),
                 "Mensaje Error" => $result->getError()->getMessage()
             ];
-            return json_encode($objeto);
+            return $this->json($objeto, 400);
         }
 
         $this->toBase64Zip($result);

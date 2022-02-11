@@ -80,17 +80,26 @@ class DocumentRequest implements DocumentRequestInterface
                 "Codigo Error" => $result->getError()->getCode(),
                 "Mensaje Error" => $result->getError()->getMessage()
             ];
-            return json_encode($objeto);
+
+            return $this->json($objeto, 400);
         }
         //Guardamos el CDR
         //$tipo_doc = $document->getTipoDoc();
         if($value==true){
-            file_put_contents('R-'.$document->getName().'.zip', $result->getCdrZip());
+            $dir_to_save = "./data_sunat/";
+            if (!is_dir($dir_to_save)) {
+                mkdir($dir_to_save);
+            }
+            file_put_contents($dir_to_save.'R-'.$document->getName().'.zip', $result->getCdrZip());
         }
 
         $this->toBase64Zip($result);
         $xml = $see->getFactory()->getLastXml();
-        file_put_contents($document->getName().'.xml', $xml);
+        $dir_to_save = "./data_sunat/";
+        if (!is_dir($dir_to_save)) {
+            mkdir($dir_to_save);
+        }
+        file_put_contents($dir_to_save.$document->getName().'.xml', $xml);
 
         $data = [
             'xml' => $xml,
@@ -118,8 +127,11 @@ class DocumentRequest implements DocumentRequestInterface
         $see = $this->getSee($document->getCompany()->getRuc());
 
         $xml  = $see->getXmlSigned($document);
-
-        file_put_contents($document->getName().'.xml', $xml);
+        $dir_to_save = "./data_sunat/";
+        if (!is_dir($dir_to_save)) {
+            mkdir($dir_to_save);
+        }
+        file_put_contents($dir_to_save.$document->getName().'.xml', $xml);
 
         return $this->file($xml, $document->getName().'.xml', 'text/xml');
     }
