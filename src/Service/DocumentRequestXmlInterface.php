@@ -40,6 +40,14 @@ interface DocumentRequestXmlInterface
     public function send_summary_xml(Request $request): Response;
 
     /**
+     * Get Result.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function send_note_xml(Request $request): Response;
+
+    /**
      * Get Configured See.
      *
      * @param string $ruc
