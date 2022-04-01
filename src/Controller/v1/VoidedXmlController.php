@@ -8,7 +8,7 @@
 
 namespace App\Controller\v1;
 
-use App\Service\DocumentRequestInterface;
+use App\Service\DocumentRequestXmlInterface;
 use App\Service\SeeFactory;
 use Greenter\Model\Voided\Voided;
 use JMS\Serializer\SerializerInterface;
@@ -19,14 +19,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class VoidedController.
+ * Class VoidedXmlController.
  *
  * @Route("/api/v1/voided")
  */
-class VoidedController extends AbstractController
+class VoidedXmlController extends AbstractController
 {
     /**
-     * @var DocumentRequestInterface
+     * @var DocumentRequestXmlInterface
      */
     private $document;
     /**
@@ -36,10 +36,10 @@ class VoidedController extends AbstractController
 
     /**
      * InvoiceController constructor.
-     * @param DocumentRequestInterface $document
+     * @param DocumentRequestXmlInterface $document
      * @param SerializerInterface $serializer
      */
-    public function __construct(DocumentRequestInterface $document, SerializerInterface $serializer)
+    public function __construct(DocumentRequestXmlInterface $document, SerializerInterface $serializer)
     {
         $this->document = $document;
         $this->document->setDocumentType(Voided::class);
@@ -47,33 +47,14 @@ class VoidedController extends AbstractController
     }
 
     /**
-     * @Route("/send", methods={"POST"})
+     * @Route("/send_voided_xml", methods={"POST"})
      *
+     * @param Request $request
      * @return Response
      */
-    public function send(): Response
+    public function send_voided_xml(Request $request): Response
     {
-        return $this->document->send(false);
-    }
-
-    /**
-     * @Route("/xml", methods={"POST"})
-     *
-     * @return Response
-     */
-    public function xml(): Response
-    {
-        return $this->document->xml();
-    }
-
-    /**
-     * @Route("/pdf", methods={"POST"})
-     *
-     * @return Response
-     */
-    public function pdf(): Response
-    {
-        return $this->document->pdf();
+        return $this->document->send_voided_xml($request);
     }
 
     /**
@@ -85,19 +66,12 @@ class VoidedController extends AbstractController
     public function status(Request $request, SeeFactory $factory): JsonResponse
     {
         $ticket = $request->query->get('ticket');
-        $filename =  $request->query->get('filename');
         if (empty($ticket)) {
             return new JsonResponse(['message' => 'Ticket Requerido'], 400);
         }
         $see = $factory->build(Voided::class, $request->query->get('ruc'));
         $result = $see->getStatus($ticket);
 
-        // Guardamos el CDR
-        $dir_to_save = "./data_sunat/";
-        if (!is_dir($dir_to_save)) {
-            mkdir($dir_to_save);
-        }
-        file_put_contents($dir_to_save.'C-'.$filename.'.zip', $result->getCdrZip());
         if ($result->isSuccess()) {
             $result->setCdrZip(base64_encode($result->getCdrZip()));
         }

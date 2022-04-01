@@ -325,6 +325,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: filename
+          in: query
+          description: Nombre de archivo
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: Operacion exitosa
@@ -376,6 +382,34 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ValidationResponse"
+  /voided/send_voided_xml:
+    post:
+      tags:
+        - voided
+      summary: Enviar el XML de comunicación de baja generado
+      description: Retorna la respuesta de SUNAT y el XML firmado
+      operationId: sendVoidedXml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileDataVoidedXml"
+        required: true
+      responses:
+        "200":
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponse"
+        "400":
+          description: Error de Validación
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ValidationResponse"
   /voided/pdf:
     post:
       tags:
@@ -412,6 +446,12 @@ paths:
         - name: ruc
           in: query
           description: RUC de empresa (Multiples Empresas)
+          required: false
+          schema:
+            type: string
+        - name: filename
+          in: query
+          description: Nombre de archivo
           required: false
           schema:
             type: string
@@ -1827,6 +1867,15 @@ components:
           type: string
           description: Ruc de la empresa
     FileDataNoteXml:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: Nombre de archivo
+        ruc:
+          type: string
+          description: Ruc de la empresa
+    FileDataVoidedXml:
       type: object
       properties:
         filename:

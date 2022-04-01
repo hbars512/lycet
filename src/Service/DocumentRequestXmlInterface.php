@@ -39,6 +39,14 @@ interface DocumentRequestXmlInterface
      */
     public function send_summary_xml(Request $request): Response;
 
+        /**
+     * Get Result.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function send_voided_xml(Request $request): Response;
+
     /**
      * Get Result.
      *

@@ -117,13 +117,12 @@ class DocumentRequest implements DocumentRequestInterface
     public function xml(): Response
     {
         $document = $this->getDocument();
-
+        //$file = $document->getName();
         /**@var $errors array */
 //        $errors = $this->validator->validate($document);
 //        if (count($errors)) {
 //            return $this->json($errors, 400);
 //        }
-
         $see = $this->getSee($document->getCompany()->getRuc());
 
         $xml  = $see->getXmlSigned($document);
@@ -133,6 +132,7 @@ class DocumentRequest implements DocumentRequestInterface
         }
         file_put_contents($dir_to_save.$document->getName().'.xml', $xml);
 
+        //return $this->file($xml, $file.'.xml', 'text/xml');
         return $this->file($xml, $document->getName().'.xml', 'text/xml');
     }
 

@@ -122,6 +122,39 @@ class DocumentRequestXml implements DocumentRequestXmlInterface
 
         return $this->json($data);
     }
+    public function send_voided_xml(Request $request): Response
+    {
+        $document = json_decode($request->getContent());
+        $filename = $document->filename;
+        $ruc = $document->ruc;
+
+        $file = $filename.'.xml';
+
+        $dir_to_save = "./data_sunat/";
+        $xmlSigned = file_get_contents($dir_to_save.$file);
+
+        $see = $this->getSee($ruc);
+        $result = $see->sendXmlFile($xmlSigned);
+
+        if (!$result->isSuccess()) {
+            $objeto = [
+                "Codigo Error" => $result->getError()->getCode(),
+                "Mensaje Error" => $result->getError()->getMessage()
+            ];
+            return $this->json($objeto, 400);
+        }
+
+        $this->toBase64Zip($result);
+        $xml = $see->getFactory()->getLastXml();
+
+        $data = [
+            'xml' => $xml,
+            'hash' => $this->GetHashFromXml($xml),
+            'sunatResponse' => $result
+        ];
+
+        return $this->json($data);
+    }
 
     public function send_note_xml(Request $request): Response
     {

@@ -86,7 +86,7 @@ class SummaryController extends AbstractController
     public function status(Request $request, SeeFactory $factory): JsonResponse
     {
         $ticket = $request->query->get('ticket');
-        $ruc = $request->query->get('ruc');
+        $filename =  $request->query->get('filename');
         if (empty($ticket)) {
             return new JsonResponse(['message' => 'Ticket Requerido'], 400);
         }
@@ -98,7 +98,7 @@ class SummaryController extends AbstractController
         if (!is_dir($dir_to_save)) {
             mkdir($dir_to_save);
         }
-        file_put_contents($dir_to_save.'R-'.$ruc.'-'.$ticket.'.zip', $result->getCdrZip());
+        file_put_contents($dir_to_save.'R-'.$filename.'.zip', $result->getCdrZip());
         if ($result->isSuccess()) {
             $result->setCdrZip(base64_encode($result->getCdrZip()));
         }
