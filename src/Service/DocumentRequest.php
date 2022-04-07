@@ -123,9 +123,11 @@ class DocumentRequest implements DocumentRequestInterface
 //        if (count($errors)) {
 //            return $this->json($errors, 400);
 //        }
+        //error_log(print_r($document, true));
         $see = $this->getSee($document->getCompany()->getRuc());
 
         $xml  = $see->getXmlSigned($document);
+        //error_log(print_r($see->getXmlSigned($document), true));
         $dir_to_save = "./data_sunat/";
         if (!is_dir($dir_to_save)) {
             mkdir($dir_to_save);
